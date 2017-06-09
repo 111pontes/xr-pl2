@@ -1,0 +1,13 @@
+{
+ "Cisco-IOS-XR-clns-isis-oper:isis": {
+  "instances": {
+   "instance": [
+    {
+     "neighbors":[
+     null
+     ]
+    }
+   ]
+  }
+ }
+}

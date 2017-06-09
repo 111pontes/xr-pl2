@@ -1,0 +1,80 @@
+{
+ "Cisco-IOS-XR-ifmgr-cfg:interface-configurations": {
+  "interface-configuration": [
+   {
+    "active": "act",
+    "interface-name": "Loopback100",
+    "interface-virtual": [
+     null
+    ],
+    "Cisco-IOS-XR-infra-rsi-cfg:vrf": "RED",
+    "Cisco-IOS-XR-ipv4-io-cfg:ipv4-network": {
+     "addresses": {
+      "primary": {
+       "address": "192.168.255.1",
+       "netmask": "255.255.255.255"
+      }
+     }
+    }
+   }
+  ]
+ },
+ "Cisco-IOS-XR-infra-rsi-cfg:vrfs": {
+  "vrf": [
+   {
+    "vrf-name": "RED",
+    "create": [
+     null
+    ],
+    "afs": {
+     "af": [
+      {
+       "af-name": "ipv4",
+       "saf-name": "unicast",
+       "topology-name": "default",
+       "create": [
+        null
+       ],
+       "Cisco-IOS-XR-ipv4-bgp-cfg:bgp": {
+        "import-route-targets": {
+         "route-targets": {
+          "route-target": [
+           {
+            "type": "as",
+            "as-or-four-byte-as": [
+             {
+              "as-xx": 0,
+              "as": 65172,
+              "as-index": 0,
+              "stitching-rt": 0
+             }
+            ]
+           }
+          ]
+         }
+        },
+        "export-route-targets": {
+         "route-targets": {
+          "route-target": [
+           {
+            "type": "as",
+            "as-or-four-byte-as": [
+             {
+              "as-xx": 0,
+              "as": 65172,
+              "as-index": 0,
+              "stitching-rt": 0
+             }
+            ]
+           }
+          ]
+         }
+        }
+       }
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

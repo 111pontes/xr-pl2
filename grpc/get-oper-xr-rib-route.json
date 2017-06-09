@@ -1,0 +1,1 @@
+{"Cisco-IOS-XR-ip-rib-ipv4-oper:rib":{"vrfs":{"vrf":[{"vrf-name":"default","afs":{"af":[{"af-name":"IPv4","safs":{"saf":[{"saf-name":"Unicast","ip-rib-route-table-names":{"ip-rib-route-table-name":[{"route-table-name":"default","routes":{"route":[{"address":"172.16.255.2","prefix-length":32,"metric":[null],"distance":[null]}]}}]}}]}}]}}]}}}
