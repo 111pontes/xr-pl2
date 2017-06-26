@@ -1,0 +1,22 @@
+{
+ "Cisco-IOS-XR-ifmgr-cfg:interface-configurations": {
+  "interface-configuration": [
+   {
+    "active": "act",
+    "interface-name": "Loopback0",
+    "description": "LOCAL TERMINATION ADDRESS",
+    "interface-virtual": [
+     null
+    ],
+    "Cisco-IOS-XR-ipv4-io-cfg:ipv4-network": {
+     "addresses": {
+      "primary": {
+       "address": "172.16.255.1",
+       "netmask": "255.255.255.255"
+      }
+     }
+    }
+   }
+  ]
+ }
+}

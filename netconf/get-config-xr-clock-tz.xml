@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="${TIMESTAMP}">
+  <get-config>
+    <source>
+      <running/>
+    </source>
+    <filter>
+      <clock xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-infra-clock-linux-cfg"/>
+    </filter>
+  </get-config>
+</rpc>

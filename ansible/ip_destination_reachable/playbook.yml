@@ -1,0 +1,18 @@
+---
+# Playbook to verify rechability of LER2 prefix (192.168.255.2) for VRF RED
+#
+# Santiago Alvarez (saalvare@cisco.com)
+# Jun 2017
+- name: Verify IPv4 VPN service
+  hosts: LERs
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: Reachability of LER2 prefix for VRF RED
+      ip_destination_reachable:
+        host: '{{ inventory_hostname }}'
+        destination: '192.168.255.2'
+        min_success_rate: 100
+        vrf_name: 'RED'
+# End of playbook
