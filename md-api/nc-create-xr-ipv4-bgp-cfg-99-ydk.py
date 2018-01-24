@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2016 Cisco Systems, Inc.
 #
@@ -29,7 +29,7 @@ optional arguments:
 """
 
 from argparse import ArgumentParser
-from urlparse import urlparse
+import urllib.parse
 
 from ydk.services import CRUDService
 from ydk.providers import NetconfServiceProvider
@@ -52,7 +52,7 @@ def config_bgp(bgp):
     four_byte_as.as_ = 65172
     four_byte_as.bgp_running = Empty()
     global_af = four_byte_as.default_vrf.global_.global_afs.GlobalAf()
-    global_af.af_name = xr_ipv4_bgp_datatypes.BgpAddressFamilyEnum.vp_nv4_unicast
+    global_af.af_name = xr_ipv4_bgp_datatypes.BgpAddressFamily.vpnv4_unicast
     global_af.enable = Empty()
     four_byte_as.default_vrf.global_.global_afs.global_af.append(global_af)
 
@@ -63,7 +63,7 @@ def config_bgp(bgp):
     neighbor.remote_as.as_yy = 65172
     neighbor.update_source_interface = "Loopback0"
     neighbor_af = neighbor.neighbor_afs.NeighborAf()
-    neighbor_af.af_name = xr_ipv4_bgp_datatypes.BgpAddressFamilyEnum.vp_nv4_unicast
+    neighbor_af.af_name = xr_ipv4_bgp_datatypes.BgpAddressFamily.vpnv4_unicast
     neighbor_af.activate = Empty()
     neighbor.neighbor_afs.neighbor_af.append(neighbor_af)
     four_byte_as.default_vrf.bgp_entity.neighbors.neighbor.append(neighbor)
@@ -72,12 +72,12 @@ def config_bgp(bgp):
     vrf = four_byte_as.vrfs.Vrf()
     vrf.vrf_name = "RED"
     vrf.vrf_global.exists = Empty()
-    vrf.vrf_global.route_distinguisher.type = xr_ipv4_bgp_cfg.BgpRouteDistinguisherEnum.as_
+    vrf.vrf_global.route_distinguisher.type = xr_ipv4_bgp_cfg.BgpRouteDistinguisher.as_
     vrf.vrf_global.route_distinguisher.as_ = 65172
     vrf.vrf_global.route_distinguisher.as_xx = 0
     vrf.vrf_global.route_distinguisher.as_index = 0
     vrf_global_af = vrf.vrf_global.vrf_global_afs.VrfGlobalAf()
-    vrf_global_af.af_name = xr_ipv4_bgp_datatypes.BgpAddressFamilyEnum.ipv4_unicast
+    vrf_global_af.af_name = xr_ipv4_bgp_datatypes.BgpAddressFamily.ipv4_unicast
     vrf_global_af.enable = Empty()
     vrf_global_af.connected_routes = vrf_global_af.ConnectedRoutes()
     vrf_global_af.connected_routes.default_metric = 10
@@ -90,7 +90,6 @@ def config_bgp(bgp):
     bgp.instance.append(instance)
 
 
-
 if __name__ == "__main__":
     """Execute main program."""
     parser = ArgumentParser()
@@ -99,12 +98,12 @@ if __name__ == "__main__":
     parser.add_argument("device",
                         help="NETCONF device (ssh://user:password@host:port)")
     args = parser.parse_args()
-    device = urlparse(args.device)
+    device = urllib.parse.urlparse(args.device)
 
     # log debug messages if verbose argument specified
     if args.verbose:
         logger = logging.getLogger("ydk")
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
         handler = logging.StreamHandler()
         formatter = logging.Formatter(("%(asctime)s - %(name)s - "
                                       "%(levelname)s - %(message)s"))
@@ -126,6 +125,5 @@ if __name__ == "__main__":
     # create configuration on NETCONF device
     crud.create(provider, bgp)
 
-    provider.close()
     exit()
 # End of script

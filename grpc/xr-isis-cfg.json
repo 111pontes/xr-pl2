@@ -1,0 +1,108 @@
+{
+ "Cisco-IOS-XR-clns-isis-cfg:isis": {
+  "instances": {
+   "instance": [
+    {
+     "instance-name": "DEFAULT",
+     "running": [
+      null
+     ],
+     "is-type": "level2",
+     "nets": {
+      "net": [
+       {
+        "net-name": "49.0001.1720.1625.5001.00"
+       }
+      ]
+     },
+     "afs": {
+      "af": [
+       {
+        "af-name": "ipv4",
+        "saf-name": "unicast",
+        "af-data": {
+         "metric-styles": {
+          "metric-style": [
+           {
+            "level": "not-set",
+            "style": "new-metric-style"
+           }
+          ]
+         }
+        }
+       }
+      ]
+     },
+     "interfaces": {
+      "interface": [
+       {
+        "interface-name": "Loopback0",
+        "running": [
+         null
+        ],
+        "state": "passive",
+        "interface-afs": {
+         "interface-af": [
+          {
+           "af-name": "ipv4",
+           "saf-name": "unicast",
+           "interface-af-data": {
+            "running": [
+             null
+            ]
+           }
+          }
+         ]
+        }
+       },
+       {
+        "interface-name": "GigabitEthernet0/0/0/0",
+        "running": [
+         null
+        ],
+        "point-to-point": [
+         null
+        ],
+        "interface-afs": {
+         "interface-af": [
+          {
+           "af-name": "ipv4",
+           "saf-name": "unicast",
+           "interface-af-data": {
+            "running": [
+             null
+            ]
+           }
+          }
+         ]
+        }
+       },
+       {
+        "interface-name": "GigabitEthernet0/0/0/1",
+        "running": [
+         null
+        ],
+        "point-to-point": [
+         null
+        ],
+        "interface-afs": {
+         "interface-af": [
+          {
+           "af-name": "ipv4",
+           "saf-name": "unicast",
+           "interface-af-data": {
+            "running": [
+             null
+            ]
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ }
+}

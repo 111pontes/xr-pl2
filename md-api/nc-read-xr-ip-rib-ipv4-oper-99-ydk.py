@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2016 Cisco Systems, Inc.
 #
@@ -29,13 +29,13 @@ optional arguments:
 """
 
 from argparse import ArgumentParser
-from urlparse import urlparse
+import urllib.parse
 
 from ydk.services import CRUDService
 from ydk.providers import NetconfServiceProvider
 from ydk.models.cisco_ios_xr import Cisco_IOS_XR_ip_rib_ipv4_oper \
     as xr_ip_rib_ipv4_oper
-from ydk.types import READ
+from ydk.filters import YFilter
 import logging
 
 
@@ -52,16 +52,16 @@ def filter_rib(rib):
     route = ip_rib_route_table_name.routes.Route()
 
     # prefix info to read
-    route.address = READ()
-    route.prefix_length = READ()
-    route.protocol_name = READ()
-    route.metric = READ()
-    route.distance = READ()
+    route.address.yfilter = YFilter.read
+    route.prefix_length.yfilter = YFilter.read
+    route.protocol_name.yfilter = YFilter.read
+    route.metric.yfilter = YFilter.read
+    route.distance.yfilter = YFilter.read
     ipv4_rib_edm_path = route.route_path.Ipv4RibEdmPath()
 
     # next-hop info to read
-    ipv4_rib_edm_path.address = READ()
-    ipv4_rib_edm_path.next_hop_vrf_name = READ()
+    ipv4_rib_edm_path.address.yfilter = YFilter.read
+    ipv4_rib_edm_path.next_hop_vrf_name.yfilter = YFilter.read
 
     route.route_path.ipv4_rib_edm_path.append(ipv4_rib_edm_path)
     ip_rib_route_table_name.routes.route.append(route)
@@ -88,7 +88,7 @@ def process_rib(rib):
     show_route_local_row = "{protocol} {prefix}/{mask} is directly connected\n"
     # format string for protocol route
     show_route_protocol_row = ("{protocol} {prefix}/{mask} [{distance}/{metric}] "
-                                "via {next_hop} (nexthop in vrf {vrf_name})\n")
+                               "via {next_hop} (nexthop in vrf {vrf_name})\n")
 
     protocol_name = {"bgp": "B", "local": "L"}
 
@@ -97,8 +97,8 @@ def process_rib(rib):
     # iterate over all routes
     for rt in (rib.vrfs.vrf[0].afs.af[0].safs.saf[0].ip_rib_route_table_names.
                ip_rib_route_table_name[0].routes.route):
-        protocol = protocol_name[rt.protocol_name]
-        if rt.protocol_name == "local":
+        protocol = protocol_name[str(rt.protocol_name)]
+        if str(rt.protocol_name) == "local":
             show_route += show_route_local_row.format(protocol=protocol,
                                                       prefix=rt.address,
                                                       mask=rt.prefix_length)
@@ -125,12 +125,12 @@ if __name__ == "__main__":
     parser.add_argument("device",
                         help="NETCONF device (ssh://user:password@host:port)")
     args = parser.parse_args()
-    device = urlparse(args.device)
+    device = urllib.parse.urlparse(args.device)
 
     # log debug messages if verbose argument specified
     if args.verbose:
         logger = logging.getLogger("ydk")
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
         handler = logging.StreamHandler()
         formatter = logging.Formatter(("%(asctime)s - %(name)s - "
                                       "%(levelname)s - %(message)s"))
@@ -153,6 +153,5 @@ if __name__ == "__main__":
     rib = crud.read(provider, rib)
     print(process_rib(rib))  # process object data
 
-    provider.close()
     exit()
 # End of script

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2016 Cisco Systems, Inc.
 #
@@ -29,7 +29,7 @@ optional arguments:
 """
 
 from argparse import ArgumentParser
-from urlparse import urlparse
+import urllib.parse
 
 from ydk.services import CRUDService
 from ydk.providers import NetconfServiceProvider
@@ -63,12 +63,12 @@ if __name__ == "__main__":
     parser.add_argument("device",
                         help="NETCONF device (ssh://user:password@host:port)")
     args = parser.parse_args()
-    device = urlparse(args.device)
+    device = urllib.parse.urlparse(args.device)
 
     # log debug messages if verbose argument specified
     if args.verbose:
         logger = logging.getLogger("ydk")
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
         handler = logging.StreamHandler()
         formatter = logging.Formatter(("%(asctime)s - %(name)s - "
                                       "%(levelname)s - %(message)s"))
@@ -90,6 +90,5 @@ if __name__ == "__main__":
     # create configuration on NETCONF device
     crud.create(provider, mpls_ldp)
 
-    provider.close()
     exit()
 # End of script

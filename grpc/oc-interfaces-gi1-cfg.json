@@ -1,0 +1,35 @@
+{
+  "openconfig-interfaces:interfaces": {
+    "interface": [
+      {
+        "name": "GigabitEthernet0/0/0/1",
+        "config": {
+          "name": "GigabitEthernet0/0/0/1",
+          "type": "iana-if-type:ethernetCsmacd",
+          "description": "CONNECTS TO LSR2 (g0/0/0/1)"
+        },
+        "subinterfaces": {
+          "subinterface": [
+            {
+              "index": 0,
+              "openconfig-if-ip:ipv4": {
+                "addresses": {
+                  "address": [
+                    {
+                      "ip": "172.16.1.2",
+                      "config": {
+                        "ip": "172.16.1.2",
+                        "prefix-length": 31
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+

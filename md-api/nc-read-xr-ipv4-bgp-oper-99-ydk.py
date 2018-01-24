@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2016 Cisco Systems, Inc.
 #
@@ -29,21 +29,24 @@ optional arguments:
 """
 
 from argparse import ArgumentParser
-from urlparse import urlparse
+import urllib.parse
 
 from ydk.services import CRUDService
 from ydk.providers import NetconfServiceProvider
 from ydk.models.cisco_ios_xr import Cisco_IOS_XR_ipv4_bgp_oper \
     as xr_ipv4_bgp_oper
 from datetime import timedelta
+from ydk.filters import YFilter
 import logging
 
 
 def filter_bgp(bgp):
     """Add data to bgp filter object."""
+    # filter neighbors
     instance = bgp.instances.Instance()
     instance.instance_name = "default"
     neighbor = instance.instance_active.default_vrf.neighbors.Neighbor()
+    neighbor.yfilter = YFilter.read
     instance.instance_active.default_vrf.neighbors.neighbor.append(neighbor)
     bgp.instances.instance.append(instance)
 
@@ -54,24 +57,24 @@ def process_bgp(bgp):
     nbr_header = ("Neighbor        Spk    AS MsgRcvd MsgSent   TblVer  "
                   "InQ OutQ  Up/Down  St/PfxRcd\n")
     # format string for BGP neighbor
-    nbr_row = ("{nbr_add:<14} {speaker_id:>4} {as_:>5} {msg_rcvd:>7} "
-               "{msg_sent:>7} {table_ver:>8} {in_queue:>4} {out_queue:>4} "
-               "{up_down:>8} {st_pfxrcd}\n")
+    nbr_row = ("{nbr_add!s:<14} {speaker_id!s:>4} {as_!s:>5} {msg_rcvd!s:>7} "
+               "{msg_sent!s:>7} {table_ver!s:>8} {in_queue!s:>4} {out_queue!s:>4} "
+               "{up_down!s:>8} {st_pfxrcd!s}\n")
 
-    bgp_st = {xr_ipv4_bgp_oper.BgpConnStateEnum.bgp_st_idle: "Idle",
-              xr_ipv4_bgp_oper.BgpConnStateEnum.bgp_st_active: "Active",
-              xr_ipv4_bgp_oper.BgpConnStateEnum.bgp_st_connect: "Connect"}
+    bgp_st = {xr_ipv4_bgp_oper.BgpConnState.bgp_st_idle.name: "Idle",
+              xr_ipv4_bgp_oper.BgpConnState.bgp_st_active.name: "Active",
+              xr_ipv4_bgp_oper.BgpConnState.bgp_st_connect.name: "Connect"}
 
     show_bgp_summary = nbr_header
 
     # iterate over all BGP neighbors
     for nbr in bgp.instances.instance[0].instance_active.default_vrf.neighbors.neighbor:
-        if nbr.connection_state == xr_ipv4_bgp_oper.BgpConnStateEnum.bgp_st_estab:
-            st_pfxrcd = "{:>10}".format(nbr.af_data[0].prefixes_accepted)
+        if str(nbr.connection_state) == xr_ipv4_bgp_oper.BgpConnState.bgp_st_estab.name:
+            st_pfxrcd = "{!s:>10}".format(nbr.af_data[0].prefixes_accepted)
         else:
             st_pfxrcd = bgp_st[nbr.connection_state]
 
-        up_down = timedelta(seconds=nbr.connection_established_time)
+        up_down = timedelta(seconds=int(str(nbr.connection_established_time)))
 
         show_bgp_summary += nbr_row.format(nbr_add=nbr.neighbor_address,
                                            speaker_id=nbr.speaker_id,
@@ -96,12 +99,12 @@ if __name__ == "__main__":
     parser.add_argument("device",
                         help="NETCONF device (ssh://user:password@host:port)")
     args = parser.parse_args()
-    device = urlparse(args.device)
+    device = urllib.parse.urlparse(args.device)
 
     # log debug messages if verbose argument specified
     if args.verbose:
         logger = logging.getLogger("ydk")
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
         handler = logging.StreamHandler()
         formatter = logging.Formatter(("%(asctime)s - %(name)s - "
                                       "%(levelname)s - %(message)s"))
@@ -124,6 +127,5 @@ if __name__ == "__main__":
     bgp = crud.read(provider, bgp)
     print(process_bgp(bgp))  # process object data
 
-    provider.close()
     exit()
 # End of script
