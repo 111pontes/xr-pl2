@@ -1,2 +1,5 @@
 [LERs]
 198.18.1.11
+
+[LERs:vars]
+ansible_python_interpreter=/usr/bin/python3  

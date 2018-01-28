@@ -1,0 +1,6 @@
+<clock xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0" xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-infra-clock-linux-cfg">
+  <time-zone xc:operation="delete">
+    <time-zone-name>PST</time-zone-name>
+    <area-name>PST8PDT</area-name>
+  </time-zone>
+</clock>

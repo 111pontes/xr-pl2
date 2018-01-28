@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
-# Copyright 2017 Cisco Systems, Inc.
+# Copyright 2018 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -77,8 +77,8 @@ options:
         aliases: []
 
 requirements:
-    - ydk 0.5.4 (python)
-    - ydk-models-cisco-ios-xr 6.2.1 (python)
+    - ydk 0.6.3 (python)
+    - ydk-models-cisco-ios-xr 6.3.1 (python)
 """
 
 EXAMPLES = """
@@ -117,6 +117,7 @@ from ydk.models.cisco_ios_xr import Cisco_IOS_XR_ping_act as xr_ping_act
 
 def ping(host, destination, repeat_count, vrf_name):
     """Execute Ping RPC over NETCONF."""
+
     # create NETCONF provider
     provider = NetconfServiceProvider(address=host,
                                       port=830,
@@ -125,18 +126,18 @@ def ping(host, destination, repeat_count, vrf_name):
                                       protocol='ssh')
     executor = ExecutorService()  # create executor service
 
-    ping_rpc = xr_ping_act.PingRpc()  # create ping RPC object
+    ping = xr_ping_act.Ping()  # create ping RPC object
 
-    ping_rpc.input.destination.destination = destination
-    ping_rpc.input.destination.repeat_count = repeat_count
-    ping_rpc.input.destination.vrf_name = vrf_name
+    ping.input.destination.destination = destination
+    ping.input.destination.repeat_count = repeat_count
+    ping.input.destination.vrf_name = vrf_name
 
-    ping_rpc.output = executor.execute_rpc(provider, ping_rpc)
+    ping = executor.execute_rpc(provider, ping, xr_ping_act.Ping())
 
-    return dict(success_rate=ping_rpc.output.ping_response.ipv4[0].success_rate,
-                rtt_min=ping_rpc.output.ping_response.ipv4[0].rtt_min,
-                rtt_avg=ping_rpc.output.ping_response.ipv4[0].rtt_avg,
-                rtt_max=ping_rpc.output.ping_response.ipv4[0].rtt_max)
+    return dict(success_rate=int(str(ping.output.ping_response.ipv4[0].success_rate)),
+                rtt_min=int(str(ping.output.ping_response.ipv4[0].rtt_min)),
+                rtt_avg=int(str(ping.output.ping_response.ipv4[0].rtt_avg)),
+                rtt_max=int(str(ping.output.ping_response.ipv4[0].rtt_max)))
 
 
 def main():
