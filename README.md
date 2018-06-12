@@ -1,5 +1,6 @@
-# Cisco IOS XR Programmability Lab 2
-This lab uses Cisco IOS XR native, IETF and OpenConfig YANG models to interact with NETCONF and Google RPC agents running on Cisco IOS XR.  In addition, it includes simple Python scripts and Ansible playbooks that use model-driven APIs to dramatically simplify network programmability and automation of Cisco IOS XR.
+# Cisco IOS XR Programmability Lab
+This lab provides hands-on experience with the programmability infrastructure in Cisco IOS XR. This new infrastructure allows you to manage a device with great flexibility in terms of models, encodings and transport options. In this lab, you will use XR native, IETF and OpenConfig YANG models to interact with NETCONF and Google RPC agents running on Cisco IOS XR. You will also use streaming telemetry, simple Python scripts and custom Ansible modules based on a model-driven SDK to enable advanced network programmability and closed-loop automation.
+
 ```
 $ tree -d
 .
@@ -7,13 +8,15 @@ $ tree -d
 │   └── ip_destination_reachable
 │       └── library
 ├── grpc
-├── md-api
+├── md-sdk
+├── md-sdk+telemetry
+│   └── pipeline
 ├── netconf
 └── yang
     └── modules
         └── cisco-ios-xr
-            └── 621
+            └── 632
 
-10 directories
+12 directories
 $
 ```
