@@ -2,7 +2,7 @@
 # Playbook to verify rechability of LER2 prefix (192.168.255.2) for VRF RED
 #
 # Santiago Alvarez (saalvare@cisco.com)
-# Jan 2018
+# Jun 2018
 
 - name: Verify IPv4 VPN service
   hosts: LERs

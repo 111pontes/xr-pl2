@@ -1,0 +1,19 @@
+{
+  "router": {
+    "name": "ler1",
+    "address": "198.18.1.11",
+    "as": 65172
+  },
+  "neighbors": [{
+    "address": "172.16.255.2",
+    "as": 65172
+  }],
+  "vrfs": [{
+    "name": "RED",
+    "route-distinguisher": "65172:0",
+    "prefix": {
+      "address": "192.168.255.2",
+      "length": 32
+    }
+  }]
+}

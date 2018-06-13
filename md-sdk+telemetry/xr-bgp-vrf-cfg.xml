@@ -1,0 +1,35 @@
+<bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-cfg" xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0" nc:operation="merge">
+  <instance>
+    <instance-name>default</instance-name>
+    <instance-as>
+      <as>0</as>
+      <four-byte-as>
+        <as>65172</as>
+        <bgp-running/>
+        <vrfs>
+          <vrf>
+            <vrf-name>RED</vrf-name>
+            <vrf-global>
+              <exists/>
+              <route-distinguisher>
+                <type>as</type>
+                <as-xx>0</as-xx>
+                <as>65172</as>
+                <as-index>0</as-index>
+              </route-distinguisher>
+              <vrf-global-afs>
+                <vrf-global-af>
+                  <af-name>ipv4-unicast</af-name>
+                  <enable/>
+                  <connected-routes>
+                    <default-metric>10</default-metric>
+                  </connected-routes>
+                </vrf-global-af>
+              </vrf-global-afs>
+            </vrf-global>
+          </vrf>
+        </vrfs>
+      </four-byte-as>
+    </instance-as>
+  </instance>
+</bgp>

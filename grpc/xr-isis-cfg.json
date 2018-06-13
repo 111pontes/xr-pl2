@@ -25,7 +25,8 @@
           "metric-style": [
            {
             "level": "not-set",
-            "style": "new-metric-style"
+            "style": "new-metric-style",
+            "transition-state": "disabled"
            }
           ]
          }

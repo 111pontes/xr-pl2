@@ -1,0 +1,13 @@
+{
+  "router": {
+    "name": "ler1",
+    "address": "198.18.1.11"
+  },
+  "destination": {
+    "ipv4_address": "198.18.1.127",
+    "port": 57400
+  },
+  "subscription": {
+    "id": "10"
+  }
+}

@@ -132,7 +132,7 @@ def ping(host, destination, repeat_count, vrf_name):
     ping.input.destination.repeat_count = repeat_count
     ping.input.destination.vrf_name = vrf_name
 
-    ping = executor.execute_rpc(provider, ping, xr_ping_act.Ping())
+    ping.output = executor.execute_rpc(provider, ping, ping.output)
 
     return dict(success_rate=int(str(ping.output.ping_response.ipv4[0].success_rate)),
                 rtt_min=int(str(ping.output.ping_response.ipv4[0].rtt_min)),
