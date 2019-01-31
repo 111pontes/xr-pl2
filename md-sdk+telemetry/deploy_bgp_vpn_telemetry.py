@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2018 Cisco Systems, Inc.
+# Copyright 2019 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ KAFKA_TOPIC = 'pipeline'
 KAFKA_BOOTSTRAP_SERVER = "localhost:9092"
 KAFKA_TIMEOUT = 30
 
-VALIDATE_TIMEOUT = 60
+VALIDATION_TIMEOUT = 90
 
 USERNAME = PASSWORD = "admin"
 PLEN = 70  # output padding length
@@ -105,7 +105,7 @@ def deploy_bgp_vpn_telemetry(kafka_consumer, provider, crud, router, destination
     return verify_bgp_vpn_telemetry(kafka_consumer,
                                     node=router["name"],
                                     subscription_id=subscription["id"],
-                                    timeout=VALIDATE_TIMEOUT)
+                                    timeout=VALIDATION_TIMEOUT)
 
 if __name__ == "__main__":
     """Execute main program."""

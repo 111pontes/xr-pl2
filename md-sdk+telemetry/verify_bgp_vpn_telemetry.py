@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2018 Cisco Systems, Inc.
+# Copyright 2019 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ from argparse import ArgumentParser
 
 KAFKA_TOPIC = 'pipeline'
 KAFKA_BOOTSTRAP_SERVER = 'localhost:9092'
-VALIDATION_TIMEOUT = 30
+VALIDATION_TIMEOUT = 60
 MAX_VALIDATION_SAMPLES = 3
 
 def verify_bgp_vpn_telemetry(kafka_consumer, node, subscription_id,

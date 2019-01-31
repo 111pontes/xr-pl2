@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2018 Cisco Systems, Inc.
+# Copyright 2019 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ KAFKA_TOPIC = 'pipeline'
 KAFKA_BOOTSTRAP_SERVER = "localhost:9092"
 KAFKA_TIMEOUT = 30
 
-VALIDATE_TIMEOUT = 60
+VALIDATION_TIMEOUT = 90
 
 USERNAME = PASSWORD = "admin"
 PLEN = 70  # output padding length
@@ -107,7 +107,7 @@ def deploy_bgp_neighbor(kafka_consumer, provider, crud, router, neighbor):
     return verify_bgp_neighbor(kafka_consumer,
                                  node=router["name"],
                                  neighbor_address=neighbor["address"],
-                                 timeout=VALIDATE_TIMEOUT)
+                                 timeout=VALIDATION_TIMEOUT)
 
 
 def deploy_bgp_vrf(kafka_consumer, provider, crud, router, vrf):
@@ -127,7 +127,7 @@ def deploy_bgp_vrf(kafka_consumer, provider, crud, router, vrf):
                             vrf_name=vrf["name"],
                             address=vrf["prefix"]["address"],
                             prefix_length=vrf["prefix"]["length"],
-                            timeout=VALIDATE_TIMEOUT)
+                            timeout=VALIDATION_TIMEOUT)
 
 
 if __name__ == "__main__":
