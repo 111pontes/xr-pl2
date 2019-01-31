@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2018 Cisco Systems, Inc.
+# Copyright 2019 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ if __name__ == "__main__":
 
     # BGP configuration
     bgp = xr_ipv4_bgp_cfg.Bgp()
-    configure_bgp_neighbor(bgp, args.local_as, args.neighbor_address, args.remote_as)
+    configure_bgp_neighbor(bgp, int(args.local_as), args.neighbor_address, int(args.remote_as))
 
     # create configuration on NETCONF device
     crud.create(provider, bgp)

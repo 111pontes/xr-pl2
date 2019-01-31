@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2018 Cisco Systems, Inc.
+# Copyright 2019 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -62,9 +62,9 @@ def configure_bgp_vrf(bgp, local_as, vrf_name, route_distinguisher):
     vrf.vrf_global.exists = Empty()
     vrf.vrf_global.route_distinguisher.type = xr_ipv4_bgp_cfg.BgpRouteDistinguisher.as_
     as_, as_index = route_distinguisher.split(':')
-    vrf.vrf_global.route_distinguisher.as_ = as_
+    vrf.vrf_global.route_distinguisher.as_ = int(as_)
     vrf.vrf_global.route_distinguisher.as_xx = 0
-    vrf.vrf_global.route_distinguisher.as_index = as_index
+    vrf.vrf_global.route_distinguisher.as_index = int(as_index)
     vrf_global_af = vrf.vrf_global.vrf_global_afs.VrfGlobalAf()
     vrf_global_af.af_name = xr_ipv4_bgp_datatypes.BgpAddressFamily.ipv4_unicast
     vrf_global_af.enable = Empty()
@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
     # BGP configuration
     bgp = xr_ipv4_bgp_cfg.Bgp()
-    configure_bgp_vrf(bgp, args.local_as, args.vrf_name, args.route_distinguisher)
+    configure_bgp_vrf(bgp, int(args.local_as), args.vrf_name, args.route_distinguisher)
 
     # create configuration on NETCONF device
     crud.create(provider, bgp)

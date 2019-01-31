@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2018 Cisco Systems, Inc.
+# Copyright 2019 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,7 +39,6 @@ from ydk.services import CRUDService
 from ydk.providers import NetconfServiceProvider
 from ydk.models.cisco_ios_xr import Cisco_IOS_XR_telemetry_model_driven_cfg \
     as xr_telemetry_model_driven_cfg
-from ydk.types import Empty
 import logging
 
 
@@ -62,7 +61,6 @@ def configure_bgp_vpn_telemetry(telemetry_model_driven, subscription_id, ipv4_ad
     # sensor group
     sensor_group = telemetry_model_driven.sensor_groups.SensorGroup()
     sensor_group.sensor_group_identifier = "BGP-VPN-SENSORS"
-    sensor_group.enable = Empty()
     sensor_path = sensor_group.sensor_paths.SensorPath()
     sensor_path.telemetry_sensor_path = "Cisco-IOS-XR-telemetry-model-driven-oper:telemetry-model-driven/subscriptions/subscription" 
     sensor_group.sensor_paths.sensor_path.append(sensor_path)
@@ -83,7 +81,6 @@ def configure_bgp_vpn_telemetry(telemetry_model_driven, subscription_id, ipv4_ad
     subscription.sensor_profiles.sensor_profile.append(sensor_profile) 
     destination_profile = subscription.destination_profiles.DestinationProfile()
     destination_profile.destination_id = "PIPELINE"
-    destination_profile.enable = Empty()
     subscription.destination_profiles.destination_profile.append(destination_profile) 
     telemetry_model_driven.subscriptions.subscription.append(subscription) 
 
@@ -129,7 +126,7 @@ if __name__ == "__main__":
     configure_bgp_vpn_telemetry(telemetry_model_driven,
                                 args.subscription_id,
                                 args.ipv4_address,
-                                args.destination_port)
+                                int(args.destination_port))
 
     # create configuration on NETCONF device
     crud.create(provider, telemetry_model_driven)
