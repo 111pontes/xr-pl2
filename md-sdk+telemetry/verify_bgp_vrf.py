@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2019 Cisco Systems, Inc.
+# Copyright 2020 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,13 +30,12 @@ optional arguments:
   -v, --verbose  print debugging messages
 """
 
+import argparse
 import kafka
-import sys
 import json
 import time
+import sys
 import logging
-
-from argparse import ArgumentParser
 
 KAFKA_TOPIC = 'pipeline'
 KAFKA_BOOTSTRAP_SERVER = 'localhost:9092'
@@ -57,13 +56,20 @@ def verify_bgp_vrf(kafka_consumer, node, vrf_name, address, prefix_length,
                 and "Rows" in msg):
             for row in msg["Rows"]:
                 # if intended IPv4 unicast prefix present in RIB
-                if (row["Keys"]["vrf-name"] == vrf_name
-                        and row["Keys"]["af-name"] == "IPv4"
-                        and row["Keys"]["saf-name"] == "Unicast"
-                        and row["Keys"]["route-table-name"] == "default"
-                        and row["Keys"]["address"] == address
-                        and row["Keys"]["prefix-length"] == prefix_length
-                        and row["Content"]["protocol-name"] == "bgp"):
+                if ("vrf-name" in row["Keys"] and
+                        "af-name" in row["Keys"] and
+                        "saf-name" in row["Keys"] and
+                        "route-table-name" in row["Keys"] and
+                        "address" in row["Keys"] and
+                        "prefix-length" in row["Keys"] and
+                        row["Keys"]["vrf-name"] == vrf_name and
+                        row["Keys"]["af-name"] == "IPv4" and
+                        row["Keys"]["saf-name"] == "Unicast" and
+                        row["Keys"]["route-table-name"] == "default" and
+                        row["Keys"]["address"] == address and
+                        row["Keys"]["prefix-length"] == prefix_length and
+                        "protocol-name" in row["Content"] and
+                        row["Content"]["protocol-name"] == "bgp"):
                     return True
 
         if time.time() - start_time > timeout:
@@ -74,7 +80,7 @@ def verify_bgp_vrf(kafka_consumer, node, vrf_name, address, prefix_length,
 
 if __name__ == "__main__":
     """Execute main program."""
-    parser = ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose", help="print debugging messages",
                         action="store_true")
     parser.add_argument("node",

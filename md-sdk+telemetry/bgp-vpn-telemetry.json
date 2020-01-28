@@ -4,10 +4,12 @@
     "address": "198.18.1.11"
   },
   "destination": {
-    "ipv4_address": "198.18.1.127",
-    "port": 57400
+    "id": "PIPELINE",
+    "ipv4-address": "198.18.1.127",
+    "port-number": 57400
   },
   "subscription": {
-    "id": "10"
+    "id": "10",
+    "destination-id": "PIPELINE"
   }
 }

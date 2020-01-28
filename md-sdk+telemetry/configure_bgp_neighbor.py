@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2019 Cisco Systems, Inc.
+# Copyright 2020 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,48 +34,37 @@ optional arguments:
 import argparse
 import urllib.parse
 import sys
+import logging
 
 from ydk.services import CRUDService
 from ydk.providers import NetconfServiceProvider
-from ydk.models.cisco_ios_xr import Cisco_IOS_XR_ipv4_bgp_cfg \
-    as xr_ipv4_bgp_cfg
-from ydk.models.cisco_ios_xr import Cisco_IOS_XR_ipv4_bgp_datatypes \
-    as xr_ipv4_bgp_datatypes
-from ydk.types import Empty
-import logging
+from ydk.models.cisco_ios_xr import Cisco_IOS_XR_um_router_bgp_cfg \
+    as xr_um_router_bgp_cfg
 
 
-def configure_bgp_neighbor(bgp, local_as, neighbor_address, remote_as):
+def configure_bgp_neighbor(router, local_as, neighbor_address, remote_as):
     """Add config data to bgp object."""
-    # global configuration
-    instance = bgp.Instance()
-    instance.instance_name = "default"
-    instance_as = instance.InstanceAs()
-    instance_as.as_ = 0
-    four_byte_as = instance_as.FourByteAs()
-    four_byte_as.as_ = local_as
-    four_byte_as.bgp_running = Empty()
-    global_af = four_byte_as.default_vrf.global_.global_afs.GlobalAf()
-    global_af.af_name = xr_ipv4_bgp_datatypes.BgpAddressFamily.vpnv4_unicast
-    global_af.enable = Empty()
-    four_byte_as.default_vrf.global_.global_afs.global_af.append(global_af)
+    # local AS
+    as_ = router.bgp.As()
+    as_.as_number = local_as
 
-    # configure BGP neighbor
-    neighbor = four_byte_as.default_vrf.bgp_entity.neighbors.Neighbor()
+    # global address family configuration
+    address_family = as_.address_families.AddressFamily()
+    address_family.af_name = xr_um_router_bgp_cfg.BgpAddressFamily.vpnv4_unicast
+    as_.address_families.address_family.append(address_family)
+
+    # configure neighbor
+    neighbor = as_.neighbors.Neighbor()
     neighbor.neighbor_address = neighbor_address
-    neighbor.remote_as.as_xx = 0
-    neighbor.remote_as.as_yy = remote_as
-    neighbor.update_source_interface = "Loopback0"
-    neighbor_af = neighbor.neighbor_afs.NeighborAf()
-    neighbor_af.af_name = xr_ipv4_bgp_datatypes.BgpAddressFamily.vpnv4_unicast
-    neighbor_af.activate = Empty()
-    neighbor.neighbor_afs.neighbor_af.append(neighbor_af)
-    four_byte_as.default_vrf.bgp_entity.neighbors.neighbor.append(neighbor)
+    neighbor.remote_as = remote_as
+    neighbor.update_source = "Loopback0"
+    address_family = neighbor.address_families.AddressFamily()
+    address_family.af_name = xr_um_router_bgp_cfg.BgpAddressFamily.vpnv4_unicast
 
     # append configuration objects
-    instance_as.four_byte_as.append(four_byte_as)
-    instance.instance_as.append(instance_as)
-    bgp.instance.append(instance)
+    neighbor.address_families.address_family.append(address_family)
+    as_.neighbors.neighbor.append(neighbor)
+    router.bgp.as_.append(as_)
 
 
 if __name__ == "__main__":
@@ -115,11 +104,12 @@ if __name__ == "__main__":
     crud = CRUDService()
 
     # BGP configuration
-    bgp = xr_ipv4_bgp_cfg.Bgp()
-    configure_bgp_neighbor(bgp, int(args.local_as), args.neighbor_address, int(args.remote_as))
+    router = xr_um_router_bgp_cfg.Router()
+    configure_bgp_neighbor(router, int(args.local_as), args.neighbor_address, 
+                           int(args.remote_as))
 
     # create configuration on NETCONF device
-    crud.create(provider, bgp)
+    crud.create(provider, router)
 
     sys.exit()
 # End of script

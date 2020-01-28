@@ -7,16 +7,15 @@ $ tree -d
 ├── ansible
 │   └── ip_destination_reachable
 │       └── library
-├── grpc
+├── gnmi
 ├── md-sdk
 ├── md-sdk+telemetry
-│   └── pipeline
 ├── netconf
 └── yang
     └── modules
         └── cisco-ios-xr
-            └── 651
+            └── 711
 
-12 directories
+11 directories
 $
 ```

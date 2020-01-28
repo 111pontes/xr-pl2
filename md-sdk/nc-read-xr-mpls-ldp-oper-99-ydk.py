@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2019 Cisco Systems, Inc.
+# Copyright 2020 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,15 +28,16 @@ optional arguments:
   -v, --verbose  print debugging messages
 """
 
-from argparse import ArgumentParser
+import argparse
 import urllib.parse
+import sys
+import logging
 
 from ydk.services import CRUDService
 from ydk.providers import NetconfServiceProvider
 from ydk.models.cisco_ios_xr import Cisco_IOS_XR_mpls_ldp_oper \
     as xr_mpls_ldp_oper
 from ydk.filters import YFilter
-import logging
 
 
 def filter_ldp(ldp):
@@ -66,7 +67,7 @@ def process_mpls_ldp(mpls_ldp):
     # format string for remote bindings
     remote_binding_row = "            {peer:19} {label}\n"
 
-    label = {"0": "ExpNull", "3": "ImpNull"}
+    label = {0: "ExpNull", 3: "ImpNull"}
 
     show_mpls_ldp_bindings = str()
 
@@ -98,7 +99,7 @@ def process_mpls_ldp(mpls_ldp):
 
 if __name__ == "__main__":
     """Execute main program."""
-    parser = ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose", help="print debugging messages",
                         action="store_true")
     parser.add_argument("device",
@@ -132,5 +133,5 @@ if __name__ == "__main__":
     mpls_ldp = crud.read(provider, mpls_ldp)
     print(process_mpls_ldp(mpls_ldp))   # process object data
 
-    exit()
+    sys.exit()
 # End of script

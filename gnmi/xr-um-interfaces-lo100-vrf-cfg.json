@@ -1,0 +1,57 @@
+{
+  "Cisco-IOS-XR-um-vrf-cfg:vrfs": {
+    "vrf": [
+      {
+        "vrf-name": "RED",
+        "address-family": {
+          "ipv4": {
+            "unicast": {
+              "Cisco-IOS-XR-um-router-bgp-cfg:import": {
+                "route-target": {
+                  "two-byte-as-rts": {
+                    "two-byte-as-rt": [
+                      {
+                        "as-number": 65172,
+                        "index": 0,
+                        "stitching": false
+                      }
+                    ]
+                  }
+                }
+              },
+              "Cisco-IOS-XR-um-router-bgp-cfg:export": {
+                "route-target": {
+                  "two-byte-as-rts": {
+                    "two-byte-as-rt": [
+                      {
+                        "as-number": 65172,
+                        "index": 0,
+                        "stitching": false
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "Cisco-IOS-XR-um-interface-cfg:interfaces": {
+    "interface": [
+      {
+        "interface-name": "Loopback100",
+        "Cisco-IOS-XR-um-vrf-cfg:vrf": "RED",
+        "ipv4": {
+          "Cisco-IOS-XR-um-if-ip-address-cfg:addresses": {
+            "address": {
+              "address": "192.168.255.1",
+              "netmask": "255.255.255.255"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

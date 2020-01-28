@@ -1,0 +1,12 @@
+{
+ "openconfig-interfaces:interfaces": {
+  "interface": [
+   {
+    "name": "GigabitEthernet0/0/0/1",
+    "config": {
+     "enabled": true
+    }
+   }
+  ]
+ }
+}

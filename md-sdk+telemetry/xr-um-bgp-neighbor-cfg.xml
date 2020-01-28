@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<router xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-router-bgp-cfg">
+  <bgp>
+    <as>
+      <as-number>65172</as-number>
+      <address-families>
+        <address-family>
+          <af-name>vpnv4-unicast</af-name>
+        </address-family>
+      </address-families>
+      <neighbors>
+        <neighbor>
+          <neighbor-address>172.16.255.2</neighbor-address>
+          <remote-as>65172</remote-as>
+          <update-source>Loopback0</update-source>
+          <address-families>
+            <address-family>
+              <af-name>vpnv4-unicast</af-name>
+            </address-family>
+          </address-families>
+        </neighbor>
+      </neighbors>
+    </as>
+  </bgp>
+</router>

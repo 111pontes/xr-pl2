@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2019 Cisco Systems, Inc.
+# Copyright 2020 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,15 +28,15 @@ optional arguments:
 
 import argparse
 import kafka
-import sys
 import json
 import datetime
+import sys
 import logging
 
 from ydk.services import CRUDService
 from ydk.providers import NetconfServiceProvider
-from ydk.models.cisco_ios_xr import Cisco_IOS_XR_ipv4_bgp_cfg \
-    as xr_ipv4_bgp_cfg
+from ydk.models.cisco_ios_xr import Cisco_IOS_XR_um_router_bgp_cfg \
+    as xr_um_router_bgp_cfg
 
 from configure_bgp_neighbor import configure_bgp_neighbor
 from configure_bgp_vrf import configure_bgp_vrf
@@ -95,14 +95,14 @@ def format_verify_msg(status):
 def deploy_bgp_neighbor(kafka_consumer, provider, crud, router, neighbor):
     """Configure and verify BGP neighbor"""
     # BGP neighbor configuration
-    bgp = xr_ipv4_bgp_cfg.Bgp()
-    configure_bgp_neighbor(bgp,
+    router_ = xr_um_router_bgp_cfg.Router()
+    configure_bgp_neighbor(router_,
                            local_as=router["as"],
                            neighbor_address=neighbor["address"],
                            remote_as=neighbor["as"])
 
     # create configuration on NETCONF device
-    crud.create(provider, bgp)
+    crud.create(provider, router_)
 
     return verify_bgp_neighbor(kafka_consumer,
                                  node=router["name"],
@@ -113,14 +113,14 @@ def deploy_bgp_neighbor(kafka_consumer, provider, crud, router, neighbor):
 def deploy_bgp_vrf(kafka_consumer, provider, crud, router, vrf):
     """Configure and verify BGP VRF"""
     # BGP VRF configuration
-    bgp = xr_ipv4_bgp_cfg.Bgp()
-    configure_bgp_vrf(bgp,
+    router_ = xr_um_router_bgp_cfg.Router()
+    configure_bgp_vrf(router_,
                       local_as=router["as"],
                       vrf_name=vrf["name"],
                       route_distinguisher=vrf["route-distinguisher"])
 
     # create configuration on NETCONF device
-    crud.create(provider, bgp)
+    crud.create(provider, router_)
 
     return verify_bgp_vrf(kafka_consumer,
                             node=router["name"],
@@ -136,6 +136,7 @@ if __name__ == "__main__":
     parser.add_argument("-v", "--verbose", help="print debugging messages",
                         action="store_true")
     parser.add_argument("neighbor_config_file_name",
+                        metavar="FILE",
                         help="neighbor configuration file (JSON)")
     args = parser.parse_args()
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<router xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-router-bgp-cfg">
+  <bgp>
+    <as>
+      <as-number>65172</as-number>
+      <vrfs>	
+        <vrf>
+          <vrf-name>RED</vrf-name>
+          <rd>
+            <two-byte-as>
+              <as-number>65172</as-number>
+              <index>0</index>
+            </two-byte-as>
+          </rd>
+          <address-families>
+            <address-family>
+              <af-name>ipv4-unicast</af-name>
+              <redistribute>
+                <connected>
+                  <metric>10</metric>
+                </connected>
+              </redistribute>
+            </address-family>
+          </address-families>
+        </vrf>
+      </vrfs>
+    </as>
+  </bgp>
+</router>

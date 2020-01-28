@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2019 Cisco Systems, Inc.
+# Copyright 2020 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,15 +28,15 @@ optional arguments:
 
 import argparse
 import kafka
-import sys
 import json
 import datetime
+import sys
 import logging
 
 from ydk.services import CRUDService
 from ydk.providers import NetconfServiceProvider
-from ydk.models.cisco_ios_xr import Cisco_IOS_XR_telemetry_model_driven_cfg \
-    as xr_telemetry_model_driven_cfg
+from ydk.models.cisco_ios_xr import Cisco_IOS_XR_um_telemetry_model_driven_cfg \
+    as xr_um_telemetry_model_driven_cfg
 
 from configure_bgp_vpn_telemetry import configure_bgp_vpn_telemetry
 from verify_bgp_vpn_telemetry import verify_bgp_vpn_telemetry
@@ -45,7 +45,7 @@ KAFKA_TOPIC = 'pipeline'
 KAFKA_BOOTSTRAP_SERVER = "localhost:9092"
 KAFKA_TIMEOUT = 30
 
-VALIDATION_TIMEOUT = 90
+VALIDATION_TIMEOUT = 60
 
 USERNAME = PASSWORD = "admin"
 PLEN = 70  # output padding length
@@ -93,14 +93,15 @@ def format_verify_msg(status):
 def deploy_bgp_vpn_telemetry(kafka_consumer, provider, crud, router, destination, subscription):
     """Configure and verify BGP VPN telemetry"""
     # BGP VPN telemetry configuration
-    telemetry_model_driven = xr_telemetry_model_driven_cfg.TelemetryModelDriven()
-    configure_bgp_vpn_telemetry(telemetry_model_driven,
+    telemetry = xr_um_telemetry_model_driven_cfg.Telemetry()
+    configure_bgp_vpn_telemetry(telemetry,
                                 subscription_id=subscription["id"],
-                                ipv4_address=destination["ipv4_address"],
-                                destination_port=destination["port"])
+                                destination_id=destination["id"],
+                                ipv4_address=destination["ipv4-address"],
+                                destination_port=destination["port-number"])
 
     # create configuration on NETCONF device
-    crud.create(provider, telemetry_model_driven)
+    crud.create(provider, telemetry)
 
     return verify_bgp_vpn_telemetry(kafka_consumer,
                                     node=router["name"],
@@ -113,6 +114,7 @@ if __name__ == "__main__":
     parser.add_argument("-v", "--verbose", help="print debugging messages",
                         action="store_true")
     parser.add_argument("telemetry_config_file_name",
+                        metavar="FILE", 
                         help="telemetry configuration file (JSON)")
     args = parser.parse_args()
 
