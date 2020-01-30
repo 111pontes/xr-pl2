@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2019 Cisco Systems, Inc.
+# Copyright 2020 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,49 +34,39 @@ optional arguments:
 import argparse
 import urllib.parse
 import sys
+import logging
 
 from ydk.services import CRUDService
 from ydk.providers import NetconfServiceProvider
-from ydk.models.cisco_ios_xr import Cisco_IOS_XR_ipv4_bgp_cfg \
-    as xr_ipv4_bgp_cfg
-from ydk.models.cisco_ios_xr import Cisco_IOS_XR_ipv4_bgp_datatypes \
-    as xr_ipv4_bgp_datatypes
-from ydk.types import Empty
-import logging
+from ydk.models.cisco_ios_xr import Cisco_IOS_XR_um_router_bgp_cfg \
+    as xr_um_router_bgp_cfg
 
 
-def configure_bgp_vrf(bgp, local_as, vrf_name, route_distinguisher):
+def configure_bgp_vrf(router, local_as, vrf_name, route_distinguisher):
     """Add config data to bgp object."""
-    # global configuration
-    instance = bgp.Instance()
-    instance.instance_name = "default"
-    instance_as = instance.InstanceAs()
-    instance_as.as_ = 0
-    four_byte_as = instance_as.FourByteAs()
-    four_byte_as.as_ = local_as
-    four_byte_as.bgp_running = Empty()
+    # local AS
+    as_ = router.bgp.As()
+    as_.as_number = local_as
 
     # vrf configuration
-    vrf = four_byte_as.vrfs.Vrf()
+    vrf = as_.vrfs.Vrf()
     vrf.vrf_name = vrf_name
-    vrf.vrf_global.exists = Empty()
-    vrf.vrf_global.route_distinguisher.type = xr_ipv4_bgp_cfg.BgpRouteDistinguisher.as_
-    as_, as_index = route_distinguisher.split(':')
-    vrf.vrf_global.route_distinguisher.as_ = int(as_)
-    vrf.vrf_global.route_distinguisher.as_xx = 0
-    vrf.vrf_global.route_distinguisher.as_index = int(as_index)
-    vrf_global_af = vrf.vrf_global.vrf_global_afs.VrfGlobalAf()
-    vrf_global_af.af_name = xr_ipv4_bgp_datatypes.BgpAddressFamily.ipv4_unicast
-    vrf_global_af.enable = Empty()
-    vrf_global_af.connected_routes = vrf_global_af.ConnectedRoutes()
-    vrf_global_af.connected_routes.default_metric = 10
-    vrf.vrf_global.vrf_global_afs.vrf_global_af.append(vrf_global_af)
-    four_byte_as.vrfs.vrf.append(vrf)
+
+    vrf.rd = vrf.Rd()
+    vrf.rd.two_byte_as = vrf.rd.TwoByteAs()
+    as_number, index = route_distinguisher.split(':')
+    vrf.rd.two_byte_as.as_number = as_number
+    vrf.rd.two_byte_as.index = int(index)
+
+    address_family = vrf.address_families.AddressFamily()
+    address_family.af_name = xr_um_router_bgp_cfg.BgpAddressFamily.ipv4_unicast
+    address_family.redistribute.connected = address_family.redistribute.Connected()
+    address_family.redistribute.connected.metric = 10
 
     # append configuration objects
-    instance_as.four_byte_as.append(four_byte_as)
-    instance.instance_as.append(instance_as)
-    bgp.instance.append(instance)
+    vrf.address_families.address_family.append(address_family)
+    as_.vrfs.vrf.append(vrf)
+    router.bgp.as_.append(as_)
 
 
 if __name__ == "__main__":
@@ -116,11 +106,12 @@ if __name__ == "__main__":
     crud = CRUDService()
 
     # BGP configuration
-    bgp = xr_ipv4_bgp_cfg.Bgp()
-    configure_bgp_vrf(bgp, int(args.local_as), args.vrf_name, args.route_distinguisher)
+    router = xr_um_router_bgp_cfg.Router()
+    configure_bgp_vrf(router, int(args.local_as), args.vrf_name, 
+                      args.route_distinguisher)
 
     # create configuration on NETCONF device
-    crud.create(provider, bgp)
+    crud.create(provider, router)
 
     sys.exit()
 # End of script

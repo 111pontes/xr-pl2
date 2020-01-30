@@ -1,0 +1,18 @@
+{
+  "Cisco-IOS-XR-um-interface-cfg:interfaces": {
+    "interface": [
+      {
+        "interface-name": "Loopback0",
+        "description": "LOCAL TERMINATION ADDRESS",
+        "ipv4": {
+          "Cisco-IOS-XR-um-if-ip-address-cfg:addresses": {
+            "address": {
+              "address": "172.16.255.1",
+              "netmask": "255.255.255.255"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

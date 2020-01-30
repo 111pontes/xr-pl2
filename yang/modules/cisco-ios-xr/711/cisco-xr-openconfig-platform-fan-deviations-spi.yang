@@ -1,0 +1,42 @@
+module cisco-xr-openconfig-platform-fan-deviations {
+  namespace "http://cisco.com/ns/yang/cisco-xr-openconfig-platform-fan-deviations";
+  prefix oc-platform-fandevs;
+
+  import openconfig-platform-fan {
+    prefix oc-platform-fan;
+  }
+  import openconfig-platform {
+    prefix oc-platform;
+  }
+
+  organization
+    "Cisco Systems, Inc.";
+  contact
+    "Cisco Systems, Inc.
+     Customer Service
+     
+     Postal: 170 West Tasman Drive
+     San Jose, CA 95134
+     
+     Tel: +1 800 553-NETS
+     
+     E-mail: cs-yang@cisco.com";
+  description
+    "This module contains a set of deviations for
+     
+     openconfig-platform-fan.yang@2018-01-18
+     
+     on Cisco IOS-XR devices.
+     
+     Copyright (c) 2017-2019 by Cisco Systems, Inc.
+     All rights reserved.";
+
+  revision 2019-08-22 {
+    description
+      "Initial revision applicable to IOS-XR 7.0.11";
+  }
+
+  deviation "/oc-platform:components/oc-platform:component/oc-platform:fan/oc-platform:state" {
+    deviate not-supported;
+  }
+}

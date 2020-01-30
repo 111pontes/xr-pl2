@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2019 Cisco Systems, Inc.
+# Copyright 2020 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,11 +24,10 @@ optional arguments:
   -v, --verbose  print debugging messages
 """
 
-from argparse import ArgumentParser
-
+import argparse
 import kafka
-import sys
 import json
+import sys
 import logging
 
 
@@ -38,7 +37,7 @@ KAFKA_BOOTSTRAP_SERVER = 'localhost:9092'
 
 if __name__ == "__main__":
     """Execute main program."""
-    parser = ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose", help="print debugging messages",
                         action="store_true")
     args = parser.parse_args()
@@ -58,8 +57,11 @@ if __name__ == "__main__":
                                          bootstrap_servers=KAFKA_BOOTSTRAP_SERVER)
 
     # iterate over all arriving messages
-    for kafka_msg in kafka_consumer:
-        print(json.dumps(json.loads(kafka_msg.value.decode('utf-8')), indent=4))
+    try:
+        for kafka_msg in kafka_consumer:
+            print(json.dumps(json.loads(kafka_msg.value.decode('utf-8')), indent=4))
+    except KeyboardInterrupt:
+        print()
+        sys.exit(0)
 
-    sys.exit()
 # End of script

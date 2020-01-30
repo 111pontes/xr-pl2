@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2019 Cisco Systems, Inc.
+# Copyright 2020 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -128,6 +128,7 @@ def ping(host, destination, repeat_count, vrf_name):
 
     ping = xr_ping_act.Ping()  # create ping RPC object
 
+    ping.input.destination = ping.input.Destination()
     ping.input.destination.destination = destination
     ping.input.destination.repeat_count = repeat_count
     ping.input.destination.vrf_name = vrf_name

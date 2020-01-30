@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2019 Cisco Systems, Inc.
+# Copyright 2020 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,13 +28,12 @@ optional arguments:
   -v, --verbose  print debugging messages
 """
 
+import argparse
 import kafka
-import sys
 import json
 import time
+import sys
 import logging
-
-from argparse import ArgumentParser
 
 KAFKA_TOPIC = 'pipeline'
 KAFKA_BOOTSTRAP_SERVER = 'localhost:9092'
@@ -46,7 +45,7 @@ def verify_bgp_vpn_telemetry(kafka_consumer, node, subscription_id,
                                timeout=VALIDATION_TIMEOUT):
     """Verify BGP VPN telemetry operation."""
     telemetry_encoding_path = "Cisco-IOS-XR-telemetry-model-driven-oper:telemetry-model-driven/subscriptions/subscription"
-    packets_sent = 0
+    packets_sent = -1
     increasing_packets_sent = True
     validation_sample_count = 0
     start_time = time.time()
@@ -58,15 +57,32 @@ def verify_bgp_vpn_telemetry(kafka_consumer, node, subscription_id,
                 msg["Telemetry"]["encoding_path"] == telemetry_encoding_path
                 and "Rows" in msg):
             for row in msg["Rows"]:
-                if (row["Keys"]["subscription-id"] == subscription_id):
+                # print(json.dumps(msg["Rows"], indent =4))
+                if ("subscription-id" in row["Keys"] and
+                        row["Keys"]["subscription-id"] == subscription_id and
+                        "subscription" in row["Content"] and
+                        "destination-grp" in row["Content"]
+                                                ["subscription"] and
+                        "destination" in row["Content"]
+                                            ["subscription"]
+                                            ["destination-grp"] and
+                        "total-num-of-packets-sent" in row["Content"]
+                                                          ["subscription"]
+                                                          ["destination-grp"]
+                                                          ["destination"]):
                     increasing_packets_sent &= (row["Content"]
                                                    ["subscription"]
-                                                   ["destination-grps"]
-                                                   ["destinations"]
-                                                   ["total-num-of-packets-sent"] > packets_sent)
-                    packets_sent = row["Content"]["subscription"]["destination-grps"]["destinations"]["total-num-of-packets-sent"]
+                                                   ["destination-grp"]
+                                                   ["destination"]
+                                                   ["total-num-of-packets-sent"] > 
+                                                packets_sent)
+                    packets_sent = (row["Content"]
+                                       ["subscription"]
+                                       ["destination-grp"]
+                                       ["destination"]
+                                       ["total-num-of-packets-sent"])
                     validation_sample_count += 1
-			    # if packets sent increased for the number of max_validation_samples
+                # if packets sent increased for the number of max_validation_samples
                 if (increasing_packets_sent):
                     if (validation_sample_count == max_validation_samples):
                         return True
@@ -81,7 +97,7 @@ def verify_bgp_vpn_telemetry(kafka_consumer, node, subscription_id,
 
 if __name__ == "__main__":
     """Execute main program."""
-    parser = ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose", help="print debugging messages",
                         action="store_true")
     parser.add_argument("node",

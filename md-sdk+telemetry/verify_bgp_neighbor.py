@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2019 Cisco Systems, Inc.
+# Copyright 2020 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,13 +28,12 @@ optional arguments:
   -v, --verbose  print debugging messages
 """
 
+import argparse
 import kafka
-import sys
 import json
 import time
+import sys
 import logging
-
-from argparse import ArgumentParser
 
 KAFKA_TOPIC = 'pipeline'
 KAFKA_BOOTSTRAP_SERVER = 'localhost:9092'
@@ -57,9 +56,12 @@ def verify_bgp_neighbor(kafka_consumer, node, neighbor_address,
                 and "Rows" in msg):
             for row in msg["Rows"]:
                 # if neighbor in intended session state
-                if (row["Keys"]["instance-name"] == "default"
-                        and row["Keys"]["neighbor-address"] == neighbor_address
-                        and row["Content"]["connection-state"] == session_state):
+                if ("instance-name" in row["Keys"] and 
+                        "neighbor-address" in row["Keys"] and
+                        row["Keys"]["instance-name"] == "default" and 
+                        row["Keys"]["neighbor-address"] == neighbor_address and
+                        "connection-state" in row["Content"] and
+                        row["Content"]["connection-state"] == session_state):
                     return True
 
         if time.time() - start_time > timeout:
@@ -70,7 +72,7 @@ def verify_bgp_neighbor(kafka_consumer, node, neighbor_address,
 
 if __name__ == "__main__":
     """Execute main program."""
-    parser = ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose", help="print debugging messages",
                         action="store_true")
     parser.add_argument("node",
